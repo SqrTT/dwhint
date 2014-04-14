@@ -5,3 +5,6 @@ node_modules/*
 
 # File with my local one-off experiments.
 demo.js
+/node_modules
+/.externalToolBuilders
+/.settings
