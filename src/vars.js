@@ -437,6 +437,31 @@ exports.rhino = {
   version      : false
 };
 
+exports.dw = {
+		  defineClass  : false,
+		  deserialize  : false,
+		  gc           : false,
+		  help         : false,
+		  importClass  : false,
+		  importPackage: false,
+		  importScript : false,
+		  dw		   : false,
+		  empty		   : false,
+		  "java"       : false,
+		  load         : false,
+		  loadClass    : false,
+		  Packages     : false,
+		  print        : false,
+		  quit         : false,
+		  readFile     : false,
+		  readUrl      : false,
+		  runCommand   : false,
+		  seal         : false,
+		  serialize    : false,
+		  spawn        : false,
+		  sync         : false
+		};
+
 exports.shelljs = {
   target       : false,
   echo         : false,

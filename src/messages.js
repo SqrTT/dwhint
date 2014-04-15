@@ -197,7 +197,10 @@ var warnings = {
   W122: "Invalid typeof value '{a}'",
   W123: "'{a}' is already defined in outer scope.",
   W124: "A generator function shall contain a yield statement.",
-  W125: "This line contains non-breaking spaces: http://jshint.com/doc/options/#nonbsp"
+  W125: "This line contains non-breaking spaces: http://jshint.com/doc/options/#nonbsp",
+  W700: "Missed type specification for '{a}'",
+  W701: "Wrong type specification for '{a}'",
+  W702: "'{a}' variable must be initialized"
 };
 
 var info = {

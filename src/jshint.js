@@ -161,6 +161,7 @@ var JSHINT = (function () {
     // These are the JSHint options that can take any value
     // (we use this object to detect invalid options)
     valOptions = {
+	  ext_file     : "js",
       maxlen       : false,
       indent       : false,
       maxerr       : false,
@@ -388,6 +389,9 @@ var JSHINT = (function () {
 
     if (state.option.worker) {
       combine(predefined, vars.worker);
+    }
+    if (state.option.ext_file === "ds") {
+        combine(predefined, vars.dw);
     }
 
     if (state.option.wsh) {
@@ -3493,6 +3497,34 @@ var JSHINT = (function () {
       }
 
       this.first = this.first.concat(names);
+      
+      if (state.option.ext_file === "ds") {
+          nonadjacent(state.tokens.curr, state.tokens.next);
+          //advance();
+          var prevVar = state.tokens.curr.value, warr = false;
+          if (state.tokens.next.id === ":") {
+        	  advance();
+        	  
+              nonadjacent(state.tokens.curr, state.tokens.next);
+              if (state.tokens.next.type !== "(identifier)") {
+                  warning("W701", state.tokens.curr, state.tokens.prev.value);
+                  warr = true;
+              } else {
+            	  if (state.tokens.next.id !== "=") {
+            	   advance();
+            	}
+              }
+          } else {
+        	  warr = true;
+        	  if (state.tokens.next.id !== "=") {
+           	    advance();
+           	  }
+              warning("W700",state.tokens.curr,state.tokens.curr.value);
+          }
+          if (!warr && state.tokens.next.id !== "=") {
+        	  warning("W702",state.tokens.prev,prevVar);
+          }
+      }
 
       if (state.tokens.next.id === "=") {
         nonadjacent(state.tokens.curr, state.tokens.next);
@@ -3511,7 +3543,9 @@ var JSHINT = (function () {
           destructuringExpressionMatch(names, value);
         }
       }
+      
 
+      
       if (state.tokens.next.id !== ",") {
         break;
       }
