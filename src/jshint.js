@@ -328,6 +328,11 @@ var JSHINT = (function () {
     if (state.option.es5) {
       warning("I003");
     }
+    if (state.option.ext_file === "ds") {
+    	state.option.esnext = true;
+    	state.option.moz = true;
+        combine(predefined, vars.dw);
+    }
 
     if (state.option.esnext) {
       combine(predefined, vars.newEcmaIdentifiers);
@@ -390,9 +395,7 @@ var JSHINT = (function () {
     if (state.option.worker) {
       combine(predefined, vars.worker);
     }
-    if (state.option.ext_file === "ds") {
-        combine(predefined, vars.dw);
-    }
+
 
     if (state.option.wsh) {
       combine(predefined, vars.wsh);
@@ -1054,7 +1057,7 @@ var JSHINT = (function () {
     if (state.option.white) {
       if (left.character !== right.from && left.line === right.line) {
         left.from += (left.character - left.from);
-        warning("W011", left, left.value);
+        warning("I011", left, left.value);
       }
     }
   }
@@ -1063,7 +1066,7 @@ var JSHINT = (function () {
     left = left || state.tokens.curr;
     right = right || state.tokens.next;
     if (state.option.white && (left.character !== right.from || left.line !== right.line)) {
-      warning("W012", right, right.value);
+      warning("I012", right, right.value);
     }
   }
 
@@ -1141,7 +1144,7 @@ var JSHINT = (function () {
       }
     } else if (!left.comment && left.character !== right.from && state.option.white) {
       left.from += (left.character - left.from);
-      warning("W011", left, left.value);
+      warning("I011", left, left.value);
     }
   }
 
@@ -1870,7 +1873,27 @@ var JSHINT = (function () {
     var metrics = funct["(metrics)"];
     metrics.nestedBlockDepth += 1;
     metrics.verifyMaxNestedBlockDepthPerFunction();
+    // dw check
+    if (isfunc && state.option.ext_file === "ds") {
+    	var inerr = false;
+    	if (state.tokens.next.id !== ":") {
+    		warning("W704",state.tokens.curr);
+    	} else {
+    		nonadjacent(state.tokens.curr, state.tokens.next);
+    		advance();
+    		nonadjacent(state.tokens.curr, state.tokens.next);
+        	if (state.tokens.next.id === "{") {
+        		warning("W703",state.tokens.curr);
+        	} else {
+          	  do {
+        		  advance();
+        	  } while (state.tokens.next.value === "." || state.tokens.next.type === "(identifier)");
+        		nonadjacent(state.tokens.curr, state.tokens.next);
+        	};
+    	};
+    	
 
+    }
     if (state.tokens.next.id === "{") {
       advance("{");
 
@@ -2716,8 +2739,10 @@ var JSHINT = (function () {
     advance("for");
     if (state.tokens.next.value === "each") {
       advance("each");
-      if (!state.option.inMoz(true)) {
-        warning("W118", state.tokens.curr, "for each");
+      if (state.option.ext_file === "ds") {
+    	  warning("W707", state.tokens.curr);
+      } else if (!state.option.inMoz(true)) {
+        warning("W118", state.tokens.curr, "for..each");
       }
     }
     advance("(");
@@ -2885,7 +2910,24 @@ var JSHINT = (function () {
         params.push(ident);
         addlabel(ident, { type: "unused", token: state.tokens.curr });
       }
-
+      if (state.option.ext_file === "ds") {
+          var inerr = false;
+          if (state.tokens.next.id !== ":") {
+              warning("W705",state.tokens.curr,state.tokens.curr.value);
+          } else {
+              nonadjacent(state.tokens.curr, state.tokens.next);
+              advance();
+              nonadjacent(state.tokens.curr, state.tokens.next);
+              if (state.tokens.next.id === ")" || state.tokens.next.id === ",") {
+                  warning("W706",state.tokens.curr);
+              } else {
+            	  do {
+            		  advance();
+            	  } while (state.tokens.next.value === "." || state.tokens.next.type === "(identifier)");
+                  //adjacent(state.tokens.curr, state.tokens.next);
+              }
+          }
+      }
       // it is a syntax error to have a regular argument after a default argument
       if (pastDefault) {
         if (state.tokens.next.id !== "=") {
@@ -2994,6 +3036,8 @@ var JSHINT = (function () {
     funct["(params)"] = functionparams(fatarrowparams);
     funct["(metrics)"].verifyMaxParametersPerFunction(funct["(params)"]);
 
+ 
+    
     // So we parse fat-arrow functions after we encounter =>. So basically
     // doFunction is called with the left side of => as its last argument.
     // This means that the parser, at that point, had already added its
@@ -3492,39 +3536,36 @@ var JSHINT = (function () {
           }
         }
       }
-      if (prefix) {
-        break;
-      }
-
-      this.first = this.first.concat(names);
       
       if (state.option.ext_file === "ds") {
           nonadjacent(state.tokens.curr, state.tokens.next);
           //advance();
-          var prevVar = state.tokens.curr.value, warr = false;
+          var prevVar = state.tokens.curr.value;
           if (state.tokens.next.id === ":") {
         	  advance();
         	  
               nonadjacent(state.tokens.curr, state.tokens.next);
               if (state.tokens.next.type !== "(identifier)") {
                   warning("W701", state.tokens.curr, state.tokens.prev.value);
-                  warr = true;
               } else {
             	  if (state.tokens.next.id !== "=") {
-            	   advance();
+                  	  do {
+                		  advance();
+                	  } while (!_.contains(["of","in"], state.tokens.next.value) && 
+                			  (state.tokens.next.value === "." || state.tokens.next.type === "(identifier)"));
             	}
               }
           } else {
-        	  warr = true;
-        	  if (state.tokens.next.id !== "=") {
-           	    advance();
-           	  }
               warning("W700",state.tokens.curr,state.tokens.curr.value);
           }
-          if (!warr && state.tokens.next.id !== "=") {
-        	  warning("W702",state.tokens.prev,prevVar);
-          }
       }
+      if (prefix) {
+        break;
+      }
+
+      this.first = this.first.concat(names);
+      
+
 
       if (state.tokens.next.id === "=") {
         nonadjacent(state.tokens.curr, state.tokens.next);
@@ -3605,12 +3646,40 @@ var JSHINT = (function () {
           }
         }
       }
-      if (prefix) {
-        break;
+      
+      if (state.option.ext_file === "ds") {
+          nonadjacent(state.tokens.curr, state.tokens.next);
+          //advance();
+          var prevVar = state.tokens.curr.value, warr = false;
+          if (state.tokens.next.id === ":") {
+        	  advance();        	  
+              nonadjacent(state.tokens.curr, state.tokens.next);
+              if (state.tokens.next.type !== "(identifier)") {
+                  warning("W701", state.tokens.curr, state.tokens.prev.value);
+                  warr = true;
+              } else {
+            	  if (state.tokens.next.id !== "=") {
+                  	  do {
+                		  advance();
+                	  } while (!_.contains(["of","in"], state.tokens.next.value) && 
+                			  (state.tokens.next.value === "." || state.tokens.next.type === "(identifier)"));
+            	}
+              }
+          } else {
+              warning("W700",state.tokens.curr,state.tokens.curr.value);
+          }
+
       }
 
-      this.first = this.first.concat(names);
+      if (prefix) {
+          break;
+        }
 
+      this.first = this.first.concat(names);
+      
+
+      
+      
       if (state.tokens.next.id === "=") {
         nonadjacent(state.tokens.curr, state.tokens.next);
         advance("=");
@@ -4026,7 +4095,9 @@ var JSHINT = (function () {
     if (t.value === "each") {
       foreachtok = t;
       advance("each");
-      if (!state.option.inMoz(true)) {
+      if (state.option.ext_file === "ds") {
+    	  warning("W707", state.tokens.curr);
+      } else if (!state.option.inMoz(true)) {
         warning("W118", state.tokens.curr, "for each");
       }
     }
@@ -4645,7 +4716,7 @@ var JSHINT = (function () {
     case "-":
       advance("-");
       if (state.tokens.curr.character !== state.tokens.next.from) {
-        warning("W011", state.tokens.curr);
+        warning("I011", state.tokens.curr);
       }
       adjacent(state.tokens.curr, state.tokens.next);
       advance("(number)");
@@ -4968,7 +5039,11 @@ var JSHINT = (function () {
       var warnUnused = function (name, tkn, type, unused_opt) {
         var line = tkn.line;
         var chr  = tkn.character;
-
+        
+        if (state.option.ext_file === "ds" && name === "execute") {
+        	return;
+        }
+        
         if (unused_opt === undefined) {
           unused_opt = state.option.unused;
         }

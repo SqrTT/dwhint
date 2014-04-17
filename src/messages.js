@@ -200,13 +200,20 @@ var warnings = {
   W125: "This line contains non-breaking spaces: http://jshint.com/doc/options/#nonbsp",
   W700: "Missed type specification for '{a}'",
   W701: "Wrong type specification for '{a}'",
-  W702: "'{a}' variable must be initialized"
+  W702: "'{a}' variable must be initialized",
+  W703: "Define return param for function or ': none' if it return nothing",
+  W704: "Missed returning type for function definition. Example: function func() : String {...}",
+  W705: "Missed argument type for '{a}'. Example: function func(arg : Object) : String {...}",
+  W706: "Wrong type given for argument",
+  W707: "The for each...in statement is deprecated. Consider using for...of instead"
 };
 
 var info = {
   I001: "Comma warnings can be turned off with 'laxcomma'.",
   I002: null,
-  I003: "ES5 option is now set per default"
+  I003: "ES5 option is now set per default",
+  I011: "Unexpected space after '{a}'.",
+  I012: "Unexpected space before '{a}'."
 };
 
 exports.errors = {};
