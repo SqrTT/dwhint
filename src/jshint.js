@@ -40,6 +40,7 @@ var Lexer    = require("./lex.js").Lexer;
 var reg      = require("./reg.js");
 var state    = require("./state.js").state;
 var style    = require("./style.js");
+var dw    = require("./dw.js");
 
 // We need this module here because environments such as IE and Rhino
 // don't necessarilly expose the 'console' API and browserify uses
@@ -162,6 +163,7 @@ var JSHINT = (function () {
     // (we use this object to detect invalid options)
     valOptions = {
 	  ext_file     : "js",
+	  name_file    : "",
       maxlen       : false,
       indent       : false,
       maxerr       : false,
@@ -329,9 +331,8 @@ var JSHINT = (function () {
       warning("I003");
     }
     if (state.option.ext_file === "ds") {
-    	state.option.esnext = true;
-    	state.option.moz = true;
-        combine(predefined, vars.dw);
+    	dw.defineOptions(state.option);
+        combine(predefined, dw.vars.global);
     }
 
     if (state.option.esnext) {
@@ -4967,6 +4968,10 @@ var JSHINT = (function () {
         checkOption(name, state.tokens.curr);
       }
     }
+    
+    if (state.option.ext_file === "ds") {
+    	dw.predefineImports(s,combine,predefined,warningAt);
+    };
 
     assume();
 

@@ -438,21 +438,6 @@ exports.rhino = {
 };
 
 
-exports.dw = {
-		  defineClass  : false,
-		  importClass  : false,
-		  importPackage: false,
-		  importScript : false,
-		  dw		   : false,
-		  empty		   : false,
-		  "java"       : false,
-		  require	   : false,
-		  module		: false,
-		  pdict		   : false,
-		  Logger	   : false,
-		  PIPELET_NEXT	: false,
-		  PIPELET_ERROR : false
-		};
 
 exports.shelljs = {
   target       : false,

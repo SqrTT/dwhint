@@ -1,8 +1,8 @@
 var a=1234;
 console.log("init");
 JSHINT(
-		"var productLineItem = 12;",
-		{ext_file: "ds", 
+		"importPackage(dw.customer);\n" + "importClass(dw.customer.Nigers);\n",
+		{ext_file: "ds",
 			"nonbsp": true,
 			"freeze":true,
 			"bitwise": true,

@@ -205,7 +205,8 @@ var warnings = {
   W704: "Missed returning type for function definition. Example: function func() : String {...}",
   W705: "Missed argument type for '{a}'. Example: function func(arg : Object) : String {...}",
   W706: "Wrong type given for argument",
-  W707: "The for each...in statement is deprecated. Consider using for...of instead"
+  W707: "The for each...in statement is deprecated. Consider using for...of instead",
+  W708: "The method '{a}' is deprecated. Use '{b}' instead"
 };
 
 var info = {
