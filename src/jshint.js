@@ -151,7 +151,7 @@ var JSHINT = (function () {
                           // should be predefined
       yui         : true, // YUI variables should be predefined
       noyield     : true, // allow generators without a yield
-
+      dwlib       : false,
       // Obsolete options
       onecase     : true, // if one case switch statements should be allowed
       regexp      : true, // if the . should not be allowed in regexp literals
@@ -334,7 +334,6 @@ var JSHINT = (function () {
     	dw.defineOptions(state.option);
         combine(predefined, dw.vars.global);
     }
-
     if (state.option.esnext) {
       combine(predefined, vars.newEcmaIdentifiers);
     }
@@ -1058,7 +1057,7 @@ var JSHINT = (function () {
     if (state.option.white) {
       if (left.character !== right.from && left.line === right.line) {
         left.from += (left.character - left.from);
-        warning("I011", left, left.value);
+        warning("W011", left, left.value);
       }
     }
   }
@@ -1067,7 +1066,7 @@ var JSHINT = (function () {
     left = left || state.tokens.curr;
     right = right || state.tokens.next;
     if (state.option.white && (left.character !== right.from || left.line !== right.line)) {
-      warning("I012", right, right.value);
+      warning("W012", right, right.value);
     }
   }
 
@@ -1145,7 +1144,7 @@ var JSHINT = (function () {
       }
     } else if (!left.comment && left.character !== right.from && state.option.white) {
       left.from += (left.character - left.from);
-      warning("I011", left, left.value);
+      warning("W011", left, left.value);
     }
   }
 
@@ -4717,7 +4716,7 @@ var JSHINT = (function () {
     case "-":
       advance("-");
       if (state.tokens.curr.character !== state.tokens.next.from) {
-        warning("I011", state.tokens.curr);
+        warning("W011", state.tokens.curr);
       }
       adjacent(state.tokens.curr, state.tokens.next);
       advance("(number)");
@@ -5085,6 +5084,10 @@ var JSHINT = (function () {
 
         if (type !== "unused" && type !== "unction" && type !== "const")
           return;
+        
+        if (type === "unction" && state.option.dwlib) {
+        	return;
+        }
 
         // Params are checked separately from other variables.
         if (func["(params)"] && func["(params)"].indexOf(key) !== -1)

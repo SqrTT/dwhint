@@ -1,8 +1,8 @@
 var a=1234;
 console.log("init");
 JSHINT(
-		"importPackage(dw.customer);\n" + "importClass(dw.customer.Nigers);\n",
-		{ext_file: "ds",
+		"require(dw.customer);\n" + "function checkPOBoxAvailability(fieldName : str) : Boolean {}\n",
+		{ext_file: "ds", name_file: "/sdff/lib/libProduct.ds",
 			"nonbsp": true,
 			"freeze":true,
 			"bitwise": true,
@@ -17,7 +17,7 @@ JSHINT(
 			"noempty": true,
 			"nonew": true,
 			"undef": true,
-			"unused": true,
+			"unused": "strict",
 			"trailing": true,
 			"maxlen": 120,
 			"maxcomplexity": 15,

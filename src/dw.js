@@ -1,6 +1,7 @@
 "use strict";
-//demandware variables defined in other file, it will not be able becouse this is private data
-exports.vars = require("./demandwarevars.js").vars;
+//demandware variables defined in other file, it will not be added because this is private data
+var vars = require("./demandwarevars.js").vars;
+exports.vars = vars;
 
 function countLines(s, last) {
 	var str = s.substring(0, last);
@@ -8,7 +9,7 @@ function countLines(s, last) {
 }
 
 exports.predefineImports = function(s, combine, predefined, warningAt) {
-	var reg = /(require|importPackage)\(\s*(dw\.[\w\.]+?)\s*\)/ig;
+	var reg = /(require|importPackage)\(\s*\"?(dw\.[\w\.]+?)\"?\s*\)/ig;
 	var m = '';
 	while (m = reg.exec(s)) {
 		if (m && m[1] === "importPackage") {
@@ -19,12 +20,11 @@ exports.predefineImports = function(s, combine, predefined, warningAt) {
 			combine(predefined, vars[m[2]]);
 		}
 	}
-	reg = /(importScript)\(\s*([\"\w\.]+?)\s*\)/ig;
+	reg = /(importScript)\(\s*\"([\w\:\/\.]+?)\"\s*\)/ig;
 	while (m = reg.exec(s)) {
 		warningAt("W708", countLines(m.input, m.index), 0, m[1],
-				"var lib = require(" + m[2] + ")");
+				"var lib = require(\"" + m[2] + "\")");
 	}
-	;
 	reg = /(require|importClass)\(\s*\"?([\w\.]+?)\"?\s*\)/ig;
 	while (m = reg.exec(s)) {
 		if (m && m[1] === "importClass") {
@@ -38,14 +38,15 @@ exports.predefineImports = function(s, combine, predefined, warningAt) {
 				obj['' + nm[1]] = false;
 				combine(predefined, obj);
 			}
-			;
 		}
 	}
-	console.log(predefined);
-
 };
 
 exports.defineOptions = function(options) {
+	var reg = /(lib\w+?|Utils)\..{1,4}$/igm;
+	if (reg.test(options.name_file)) {
+		options.dwlib = true;
+	};
 	options.esnext = true;
 	options.moz = true;
 	options.browser = false;
