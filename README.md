@@ -1,4 +1,4 @@
-Modifed version of JSHint for Demandware porpuses
+Modifed version of JSHint for Demandware purposes
 --------------------------------------------------
 
 
