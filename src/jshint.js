@@ -1877,13 +1877,13 @@ var JSHINT = (function () {
     if (isfunc && state.option.ext_file === "ds") {
     	var inerr = false;
     	if (state.tokens.next.id !== ":") {
-    		warning("W704",state.tokens.curr);
+    		//warning("W704",state.tokens.curr);
     	} else {
     		nonadjacent(state.tokens.curr, state.tokens.next);
     		advance();
     		nonadjacent(state.tokens.curr, state.tokens.next);
         	if (state.tokens.next.id === "{") {
-        		warning("W703",state.tokens.curr);
+        		//warning("W703",state.tokens.curr);
         	} else {
           	  do {
         		  advance();
@@ -2913,13 +2913,13 @@ var JSHINT = (function () {
       if (state.option.ext_file === "ds") {
           var inerr = false;
           if (state.tokens.next.id !== ":") {
-              warning("W705",state.tokens.curr,state.tokens.curr.value);
+              //warning("W705",state.tokens.curr,state.tokens.curr.value);
           } else {
               nonadjacent(state.tokens.curr, state.tokens.next);
               advance();
               nonadjacent(state.tokens.curr, state.tokens.next);
               if (state.tokens.next.id === ")" || state.tokens.next.id === ",") {
-                  warning("W706",state.tokens.curr);
+                 // warning("W706",state.tokens.curr);
               } else {
             	  do {
             		  advance();
@@ -3538,7 +3538,10 @@ var JSHINT = (function () {
       }
       
       if (state.option.ext_file === "ds") {
-          nonadjacent(state.tokens.curr, state.tokens.next);
+    	 // debugger;
+    	  if (state.tokens.next.value === ":") {
+    		  nonadjacent(state.tokens.curr, state.tokens.next);
+    	  }
           //advance();
           var prevVar = state.tokens.curr.value;
           if (state.tokens.next.id === ":") {
@@ -3546,7 +3549,7 @@ var JSHINT = (function () {
         	  
               nonadjacent(state.tokens.curr, state.tokens.next);
               if (state.tokens.next.type !== "(identifier)") {
-                  warning("W701", state.tokens.curr, state.tokens.prev.value);
+                 // warning("W701", state.tokens.curr, state.tokens.prev.value);
               } else {
             	  if (state.tokens.next.id !== "=") {
                   	  do {
@@ -3556,7 +3559,7 @@ var JSHINT = (function () {
             	}
               }
           } else {
-              warning("W700",state.tokens.curr,state.tokens.curr.value);
+             // warning("W700",state.tokens.curr,state.tokens.curr.value);
           }
       }
       if (prefix) {
@@ -3615,7 +3618,9 @@ var JSHINT = (function () {
     }
 
     if (funct["(onevar)"] && state.option.onevar) {
-      warning("W081");
+    	if (state.option.ext_file !== "ds") {	
+    		warning("W081");
+    	}
     } else if (!funct["(global)"]) {
       funct["(onevar)"] = true;
     }
@@ -3655,7 +3660,7 @@ var JSHINT = (function () {
         	  advance();        	  
               nonadjacent(state.tokens.curr, state.tokens.next);
               if (state.tokens.next.type !== "(identifier)") {
-                  warning("W701", state.tokens.curr, state.tokens.prev.value);
+                 // warning("W701", state.tokens.curr, state.tokens.prev.value);
                   warr = true;
               } else {
             	  if (state.tokens.next.id !== "=") {
@@ -3666,7 +3671,7 @@ var JSHINT = (function () {
             	}
               }
           } else {
-              warning("W700",state.tokens.curr,state.tokens.curr.value);
+              //warning("W700",state.tokens.curr,state.tokens.curr.value);
           }
 
       }
@@ -4095,9 +4100,7 @@ var JSHINT = (function () {
     if (t.value === "each") {
       foreachtok = t;
       advance("each");
-      if (state.option.ext_file === "ds") {
-    	  warning("W707", state.tokens.curr);
-      } else if (!state.option.inMoz(true)) {
+      if (!state.option.inMoz()) {
         warning("W118", state.tokens.curr, "for each");
       }
     }

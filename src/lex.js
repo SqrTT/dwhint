@@ -1289,14 +1289,15 @@ Lexer.prototype = {
    * Tabs followed by one space followed by a block comment are allowed.
    */
   scanMixedSpacesAndTabs: function () {
-    var at, match;
-
+    var at, match, fin = this.input;
+    fin = fin.replace(/\/\/.+$/, "");
+    fin = fin.replace(/\*.+$/, "");
     if (state.option.smarttabs) {
       // Negative look-behind for "//"
       match = this.input.match(/(\/\/|^\s?\*)? \t/);
       at = match && !match[1] ? 0 : -1;
     } else {
-      at = this.input.search(/ \t|\t [^\*]/);
+      at = fin.search(/ \t|\t [^\*]/);
     }
 
     return at;

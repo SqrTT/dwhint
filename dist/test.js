@@ -1,7 +1,12 @@
 var a=1234;
 console.log("init");
+
+var test = "for each(var lineitem : ProductLineItem in basket.productLineItems)\n\
+		{\n\
+		}";
+
 JSHINT(
-		"require(dw.customer);\n" + "function checkPOBoxAvailability(fieldName : str) : Boolean {}\n",
+		test,
 		{ext_file: "ds", name_file: "/sdff/lib/libProduct.ds",
 			"nonbsp": true,
 			"freeze":true,
@@ -9,7 +14,7 @@ JSHINT(
 			"camelcase": true,
 			"curly": true,
 			"eqeqeq": true,
-			"forin": true,
+			"forin": false,
 			"indent": 4,
 			"latedef": true,
 			"newcap": true,
