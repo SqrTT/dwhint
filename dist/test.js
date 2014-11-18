@@ -1,9 +1,9 @@
 var a=1234;
 console.log("init");
 
-var test = "for each(var lineitem : ProductLineItem in basket.productLineItems)\n\
-		{\n\
-		}";
+var test = "importClass(dw.util.StringUtils); \n\
+		StringUtils.formatMe()\n\
+		";
 
 JSHINT(
 		test,

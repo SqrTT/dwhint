@@ -152,6 +152,8 @@ var JSHINT = (function () {
       yui         : true, // YUI variables should be predefined
       noyield     : true, // allow generators without a yield
       dwlib       : false,
+      usetypes    : false,
+      lowformat   : true,
       // Obsolete options
       onecase     : true, // if one case switch statements should be allowed
       regexp      : true, // if the . should not be allowed in regexp literals
@@ -465,6 +467,16 @@ var JSHINT = (function () {
 
   function warning(code, t, a, b, c, d) {
     var ch, l, w, msg;
+    var mapLevel =  state.option.lowformat ? {
+      'W011' : 'I011',
+      'W012' : 'I012',
+      'W013' : 'I013',
+      'W015' : 'I015',
+      'W099' : 'I099',
+      'W102' : 'I102',
+      'W109' : 'I109',
+      'W108' : 'I108'
+    } : {};
 
     if (/^W\d{3}$/.test(code)) {
       if (state.ignored[code])
@@ -488,7 +500,7 @@ var JSHINT = (function () {
     w = {
       id: "(error)",
       raw: msg.desc,
-      code: msg.code,
+      code: mapLevel[msg.code] ? mapLevel[msg.code] : msg.code,
       evidence: state.lines[l - 1] || "",
       line: l,
       character: ch,
@@ -1877,13 +1889,17 @@ var JSHINT = (function () {
     if (isfunc && state.option.ext_file === "ds") {
     	var inerr = false;
     	if (state.tokens.next.id !== ":") {
-    		//warning("W704",state.tokens.curr);
+    		if (state.option.usetypes) {
+    			warning("W704",state.tokens.curr);
+    		}
     	} else {
     		nonadjacent(state.tokens.curr, state.tokens.next);
     		advance();
     		nonadjacent(state.tokens.curr, state.tokens.next);
         	if (state.tokens.next.id === "{") {
-        		//warning("W703",state.tokens.curr);
+        		if (state.option.usetypes) {
+        			warning("W703",state.tokens.curr);
+        		}
         	} else {
           	  do {
         		  advance();
@@ -2913,13 +2929,17 @@ var JSHINT = (function () {
       if (state.option.ext_file === "ds") {
           var inerr = false;
           if (state.tokens.next.id !== ":") {
-              //warning("W705",state.tokens.curr,state.tokens.curr.value);
+        	  if (state.option.usetypes) {
+        		  warning("W705",state.tokens.curr,state.tokens.curr.value);
+        	  }
           } else {
               nonadjacent(state.tokens.curr, state.tokens.next);
               advance();
               nonadjacent(state.tokens.curr, state.tokens.next);
               if (state.tokens.next.id === ")" || state.tokens.next.id === ",") {
-                 // warning("W706",state.tokens.curr);
+            	  if (state.option.usetypes) {
+            		  warning("W706",state.tokens.curr);
+            	  }
               } else {
             	  do {
             		  advance();
@@ -3548,8 +3568,8 @@ var JSHINT = (function () {
         	  advance();
         	  
               nonadjacent(state.tokens.curr, state.tokens.next);
-              if (state.tokens.next.type !== "(identifier)") {
-                 // warning("W701", state.tokens.curr, state.tokens.prev.value);
+              if (state.tokens.next.type !== "(identifier)" && state.option.usetypes) {
+                  warning("W701", state.tokens.curr, state.tokens.prev.value);
               } else {
             	  if (state.tokens.next.id !== "=") {
                   	  do {
@@ -3559,7 +3579,9 @@ var JSHINT = (function () {
             	}
               }
           } else {
-             // warning("W700",state.tokens.curr,state.tokens.curr.value);
+             if (state.option.usetypes) {
+        	  warning("W700",state.tokens.curr,state.tokens.curr.value);
+             }
           }
       }
       if (prefix) {
@@ -3660,7 +3682,9 @@ var JSHINT = (function () {
         	  advance();        	  
               nonadjacent(state.tokens.curr, state.tokens.next);
               if (state.tokens.next.type !== "(identifier)") {
-                 // warning("W701", state.tokens.curr, state.tokens.prev.value);
+            	  if (state.option.usetypes) {
+            		  warning("W701", state.tokens.curr, state.tokens.prev.value);
+            	  }
                   warr = true;
               } else {
             	  if (state.tokens.next.id !== "=") {
@@ -3671,7 +3695,9 @@ var JSHINT = (function () {
             	}
               }
           } else {
-              //warning("W700",state.tokens.curr,state.tokens.curr.value);
+        	  if (state.option.usetypes) {
+                 warning("W700",state.tokens.curr,state.tokens.curr.value);
+        	  }
           }
 
       }

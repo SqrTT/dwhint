@@ -13,8 +13,11 @@ exports.predefineImports = function(s, combine, predefined, warningAt) {
 	var m = '';
 	while (m = reg.exec(s)) {
 		if (m && m[1] === "importPackage") {
-			warningAt("W708", countLines(m.input, m.index), 0, m[1], "require("
-					+ m[2] + ")");
+			var pack = m[2].replace('.', '/'),
+				varr = m[2].replace('.', '');
+			
+			warningAt("W708", countLines(m.input, m.index), 0, m[1], "var "+ varr +" = require('"
+					+ pack + "');");
 		}
 		if (m && m[2] && vars[m[2]]) {
 			combine(predefined, vars[m[2]]);
@@ -27,17 +30,19 @@ exports.predefineImports = function(s, combine, predefined, warningAt) {
 	}
 	reg = /(require|importClass)\(\s*\"?([\w\.]+?)\"?\s*\)/ig;
 	while (m = reg.exec(s)) {
+		var nm;
 		if (m && m[1] === "importClass") {
-			warningAt("W708", countLines(m.input, m.index), 0, m[1], "require("
-					+ m[2] + ")");
-		}
-		if (m && m[2]) {
-			var nm = m[2].match(/\.([A-Z][a-z]+)$/);
-			var obj = {};
-			if (nm) {
-				obj['' + nm[1]] = false;
-				combine(predefined, obj);
+			var pack = m[2].replace(/\.(\w+)$/, '').replace('.', '/');
+			if (m && m[2]) {
+				nm = m[2].match(/\.(\w+)$/);
+				var obj = {};
+				if (nm && nm[1]) {
+					obj['' + nm[1]] = false;
+					combine(predefined, obj);
+				}
 			}
+			warningAt("W708", countLines(m.input, m.index), 0, m[1], "var " + nm[1] + " = require('"
+					+ pack + "')." + nm[1] + ';');
 		}
 	}
 };
