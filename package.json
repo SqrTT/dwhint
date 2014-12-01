@@ -28,7 +28,6 @@
   },
 
   "devDependencies": {
-    "jshint":        "2.4.x",
     "shelljs":       "0.1.x",
     "browserify":    "3.x",
     "coveraje":      "0.2.x",
