@@ -42,6 +42,34 @@ var state    = require("./state.js").state;
 var style    = require("./style.js");
 var dw    = require("./dw.js");
 
+var DEFAULT_CONFIG = {
+  "usetypes" : false,
+  "lowformat": true,
+  "maxerr" : 1000,
+  "nonbsp" : true,
+  "freeze" : true,
+  "bitwise" : true,
+  "camelcase" : true,
+  "curly" : true,
+  "eqeqeq" : true,
+  "forin" : false,
+  "indent" : 4,
+  "latedef" : true,
+  "newcap" : true,
+  "noarg" : true,
+  "noempty" : true,
+  "nonew" : true,
+  "undef" : true,
+  "unused" : true,
+  "trailing" : true,
+  "maxlen" : 120,
+  "maxcomplexity" : 12,
+  "browser" : true,
+  "jquery" : false,
+  "onevar" : true,
+  "white" : true,
+  "quotmark": "single"
+};
 // We need this module here because environments such as IE and Rhino
 // don't necessarilly expose the 'console' API and browserify uses
 // it to log things. It's a sad state of affair, really.
@@ -1907,7 +1935,7 @@ var JSHINT = (function () {
         		nonadjacent(state.tokens.curr, state.tokens.next);
         	};
     	};
-    	
+
 
     }
     if (state.tokens.next.id === "{") {
@@ -3056,8 +3084,8 @@ var JSHINT = (function () {
     funct["(params)"] = functionparams(fatarrowparams);
     funct["(metrics)"].verifyMaxParametersPerFunction(funct["(params)"]);
 
- 
-    
+
+
     // So we parse fat-arrow functions after we encounter =>. So basically
     // doFunction is called with the left side of => as its last argument.
     // This means that the parser, at that point, had already added its
@@ -3556,7 +3584,7 @@ var JSHINT = (function () {
           }
         }
       }
-      
+
       if (state.option.ext_file === "ds") {
     	 // debugger;
     	  if (state.tokens.next.value === ":") {
@@ -3566,7 +3594,7 @@ var JSHINT = (function () {
           var prevVar = state.tokens.curr.value;
           if (state.tokens.next.id === ":") {
         	  advance();
-        	  
+
               nonadjacent(state.tokens.curr, state.tokens.next);
               if (state.tokens.next.type !== "(identifier)" && state.option.usetypes) {
                   warning("W701", state.tokens.curr, state.tokens.prev.value);
@@ -3574,7 +3602,7 @@ var JSHINT = (function () {
             	  if (state.tokens.next.id !== "=") {
                   	  do {
                 		  advance();
-                	  } while (!_.contains(["of","in"], state.tokens.next.value) && 
+                	  } while (!_.contains(["of","in"], state.tokens.next.value) &&
                 			  (state.tokens.next.value === "." || state.tokens.next.type === "(identifier)"));
             	}
               }
@@ -3589,7 +3617,7 @@ var JSHINT = (function () {
       }
 
       this.first = this.first.concat(names);
-      
+
 
 
       if (state.tokens.next.id === "=") {
@@ -3609,9 +3637,9 @@ var JSHINT = (function () {
           destructuringExpressionMatch(names, value);
         }
       }
-      
 
-      
+
+
       if (state.tokens.next.id !== ",") {
         break;
       }
@@ -3640,7 +3668,7 @@ var JSHINT = (function () {
     }
 
     if (funct["(onevar)"] && state.option.onevar) {
-    	if (state.option.ext_file !== "ds") {	
+    	if (state.option.ext_file !== "ds") {
     		warning("W081");
     	}
     } else if (!funct["(global)"]) {
@@ -3673,13 +3701,13 @@ var JSHINT = (function () {
           }
         }
       }
-      
+
       if (state.option.ext_file === "ds") {
           nonadjacent(state.tokens.curr, state.tokens.next);
           //advance();
           var prevVar = state.tokens.curr.value, warr = false;
           if (state.tokens.next.id === ":") {
-        	  advance();        	  
+        	  advance();
               nonadjacent(state.tokens.curr, state.tokens.next);
               if (state.tokens.next.type !== "(identifier)") {
             	  if (state.option.usetypes) {
@@ -3690,7 +3718,7 @@ var JSHINT = (function () {
             	  if (state.tokens.next.id !== "=") {
                   	  do {
                 		  advance();
-                	  } while (!_.contains(["of","in"], state.tokens.next.value) && 
+                	  } while (!_.contains(["of","in"], state.tokens.next.value) &&
                 			  (state.tokens.next.value === "." || state.tokens.next.type === "(identifier)"));
             	}
               }
@@ -3707,10 +3735,10 @@ var JSHINT = (function () {
         }
 
       this.first = this.first.concat(names);
-      
 
-      
-      
+
+
+
       if (state.tokens.next.id === "=") {
         nonadjacent(state.tokens.curr, state.tokens.next);
         advance("=");
@@ -4824,7 +4852,7 @@ var JSHINT = (function () {
   var itself = function (s, o, g) {
     var i, k, x;
     var optionKeys;
-    var newOptionObj = {};
+    var newOptionObj = _.clone(DEFAULT_CONFIG);
     var newIgnoredObj = {};
 
     o = _.clone(o);
@@ -4996,7 +5024,7 @@ var JSHINT = (function () {
         checkOption(name, state.tokens.curr);
       }
     }
-    
+
     if (state.option.ext_file === "ds") {
     	dw.predefineImports(s,combine,predefined,warningAt);
     };
@@ -5072,11 +5100,11 @@ var JSHINT = (function () {
       var warnUnused = function (name, tkn, type, unused_opt) {
         var line = tkn.line;
         var chr  = tkn.character;
-        
+
         if (state.option.ext_file === "ds" && name === "execute") {
         	return;
         }
-        
+
         if (unused_opt === undefined) {
           unused_opt = state.option.unused;
         }
@@ -5113,7 +5141,7 @@ var JSHINT = (function () {
 
         if (type !== "unused" && type !== "unction" && type !== "const")
           return;
-        
+
         if (type === "unction" && state.option.dwlib) {
         	return;
         }
