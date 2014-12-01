@@ -1,23 +1,7 @@
 {
-  "name":     "jshint",
+  "name":     "dwhint",
   "version":  "2.4.4",
-  "homepage": "http://jshint.com/",
   "description": "Static analysis tool for JavaScript",
-
-  "author": {
-    "name":  "Anton Kovalyov",
-    "email": "anton@kovalyov.net",
-    "url":   "http://anton.kovalyov.net/"
-  },
-
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jshint/jshint.git"
-  },
-
-  "bugs": {
-    "url": "https://github.com/jshint/jshint/issues"
-  },
 
   "bin": {
     "jshint": "./bin/jshint"
