@@ -10,7 +10,7 @@ var vars = {
 		empty : false,
 		require : false,
 		module : false,
-		pdict : false,
+		exports : false,
 		PIPELET_NEXT : false,
 		PIPELET_ERROR : false,
 		XML : false,

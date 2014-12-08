@@ -43,6 +43,9 @@ var style    = require("./style.js");
 var dw    = require("./dw.js");
 
 var DEFAULT_CONFIG = {
+  "maxstatements" : 100, // {int} max statements per function
+  "maxdepth"     : 20, // {int} max nested block depth per function
+  "maxparams"    : 10, // {int} max params per function
   "usetypes" : false,
   "lowformat": true,
   "maxerr" : 1000,
@@ -65,7 +68,7 @@ var DEFAULT_CONFIG = {
   "maxlen" : 120,
   "maxcomplexity" : 12,
   "browser" : true,
-  "jquery" : false,
+  "jquery" : true,
   "onevar" : true,
   "white" : true,
   "quotmark": "single"
@@ -3551,7 +3554,6 @@ var JSHINT = (function () {
     // JavaScript does not have block scope. It only has function scope. So,
     // declaring a variable in a block can have unexpected consequences.
     var tokens, lone, value;
-
     if (funct["(onevar)"] && state.option.onevar) {
       warning("W081");
     } else if (!funct["(global)"]) {
@@ -3703,23 +3705,25 @@ var JSHINT = (function () {
       }
 
       if (state.option.ext_file === "ds") {
-          nonadjacent(state.tokens.curr, state.tokens.next);
+          if (state.option.usetypes) {
+              nonadjacent(state.tokens.curr, state.tokens.next);
+          }
           //advance();
           var prevVar = state.tokens.curr.value, warr = false;
           if (state.tokens.next.id === ":") {
-        	  advance();
+              advance();
               nonadjacent(state.tokens.curr, state.tokens.next);
               if (state.tokens.next.type !== "(identifier)") {
-            	  if (state.option.usetypes) {
-            		  warning("W701", state.tokens.curr, state.tokens.prev.value);
-            	  }
+                  if (state.option.usetypes) {
+                      warning("W701", state.tokens.curr, state.tokens.prev.value);
+                  }
                   warr = true;
               } else {
-            	  if (state.tokens.next.id !== "=") {
-                  	  do {
-                		  advance();
-                	  } while (!_.contains(["of","in"], state.tokens.next.value) &&
-                			  (state.tokens.next.value === "." || state.tokens.next.type === "(identifier)"));
+                  if (state.tokens.next.id !== "=") {
+                      do {
+                        advance();
+                      } while (!_.contains(["of","in"], state.tokens.next.value) &&
+                              (state.tokens.next.value === "." || state.tokens.next.type === "(identifier)"));
             	}
               }
           } else {
